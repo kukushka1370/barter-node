@@ -51,7 +51,10 @@ class BankAccountController {
 
     async transfer(req, res, next) {
         try {
-            return res.json();
+            const { bankAccountFromId, bankAccountToId, transferAmount } = req.body;
+            console.log({ bankAccountFromId, bankAccountToId, transferAmount });
+            const bankAccounts = await bankAccountService.transfer(bankAccountFromId, bankAccountToId, transferAmount);
+            return res.json(bankAccounts);
         } catch (e) {
             next(e);
         }

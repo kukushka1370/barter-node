@@ -15,7 +15,31 @@ class StatsController {
             const { updatedMoney } = req.body;
             console.log(updatedMoney)
             const info = await statsService.updateTotalMoney(updatedMoney);
-            console.log({info})
+            console.log({ info })
+            return res.json(info);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async updateCommission(req, res, next) {
+        try {
+            const { commission } = req.body;
+            console.log({ commission })
+            const info = await statsService.updateCommission(commission);
+            console.log({ info })
+            return res.json(info);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async updateMax(req, res, next) {
+        try {
+            const { max } = req.body;
+            console.log({ max })
+            const info = await statsService.updateMax(max);
+            console.log({ info })
             return res.json(info);
         } catch (err) {
             next(err);

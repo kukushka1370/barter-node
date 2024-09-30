@@ -34,16 +34,24 @@ class BankAccountService {
         const bankAccountTo = await BankAccount.findOne({ _id: bIdTO });
         if (!bankAccountFrom || !bankAccountTo) throw ApiError.BadRequest(`Bank Account not found`);
 
-        const currencyFrom = await Currency.findOne({ _id: bankAccountFrom.currencyId });
-        const currencyTo = await Currency.findOne({ _id: bankAccountTo.currencyId });
+        console.log(bankAccountFrom.currencyCode, bankAccountTo.currencyCode);
+
+        const currencyFrom = await Currency.findOne({ currencyCode: bankAccountFrom.currencyCode });
+        const currencyTo = await Currency.findOne({ currencyCode: bankAccountTo.currencyCode });
         if (!currencyFrom || !currencyTo) throw ApiError.BadRequest(`Currency not found`);
+
+        console.log(currencyFrom.currencyCode, " ", currencyTo.currencyCode)
 
         const exchangeRate = this.getExchangeRate(currencyFrom.code.toUpperCase(), currencyTo.code.toUpperCase());
         const convertedAmount = amount * exchangeRate;
 
-        bankAccountFrom.balance -= amount;
-        bankAccountTo.balance += convertedAmount;
+        console.log("gegegeggegeg")
 
+        if (bankAccountFrom?.amount < amount) throw ApiError.BadRequest("Not enough money");
+        bankAccountFrom.amount -= amount;
+        bankAccountTo.amount += convertedAmount;
+
+        console.log("geggegegaiojoiajiojiofaioeg")
         await bankAccountFrom.save();
         await bankAccountTo.save();
 

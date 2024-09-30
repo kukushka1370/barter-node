@@ -57,6 +57,24 @@ class StatsService {
         await firstStatsRecord.save();
         return firstStatsRecord;
     }
+
+    async updateCommission(commission = []) {
+        const firstStatsRecord = await Stats.findOne().sort({ createdAt: 1 });
+        if (commission[0] && typeof +commission[0] == "number") firstStatsRecord.systemCommission = +commission[0];
+        if (commission[1] && typeof +commission[1] == "number") firstStatsRecord.investorCommission = +commission[1];
+        if (commission[2] && typeof +commission[2] == "number") firstStatsRecord.managerCommission = +commission[2];
+        await firstStatsRecord.save();
+        return firstStatsRecord;
+    }
+
+    async updateMax(max = []) {
+        const firstStatsRecord = await Stats.findOne().sort({ createdAt: 1 });
+        if (max[0] && typeof +max[0] == "number") firstStatsRecord.systemCommissionMax = +max[0];
+        if (max[1] && typeof +max[1] == "number") firstStatsRecord.investorCommissionMax = +max[1];
+        if (max[2] && typeof +max[2] == "number") firstStatsRecord.managerCommissionMax = +max[2];
+        await firstStatsRecord.save();
+        return firstStatsRecord;
+    }
 }
 
 export default new StatsService();
