@@ -40,12 +40,12 @@ class BankAccountService {
         const currencyTo = await Currency.findOne({ currencyCode: bankAccountTo.currencyCode });
         if (!currencyFrom || !currencyTo) throw ApiError.BadRequest(`Currency not found`);
 
-        console.log(currencyFrom.currencyCode, " ", currencyTo.currencyCode)
+        console.log(currencyFrom.currencyCode, "AND", currencyTo.currencyCode)
 
-        const exchangeRate = this.getExchangeRate(currencyFrom.code.toUpperCase(), currencyTo.code.toUpperCase());
+        const exchangeRate = this.getExchangeRate(currencyFrom.currencyCode.toUpperCase(), currencyTo.currencyCode.toUpperCase());
         const convertedAmount = amount * exchangeRate;
 
-        console.log("gegegeggegeg")
+        console.log({convertedAmount})
 
         if (bankAccountFrom?.amount < amount) throw ApiError.BadRequest("Not enough money");
         bankAccountFrom.amount -= amount;
@@ -63,12 +63,14 @@ class BankAccountService {
     }
 
     getExchangeRate(fromCurrencyCode, toCurrencyCode) {
+        console.log(fromCurrencyCode, toCurrencyCode);
         const exchangeRates = {
             'USD': { 'EUR': 0.84, 'RUB': 60.5 },
             'EUR': { 'USD': 1.19, 'RUB': 72.1 },
             'RUB': { 'USD': 0.016, 'EUR': 0.014 },
         };
 
+        if (!Object.keys(exchangeRates).includes(fromCurrencyCode)) throw ApiError.BadRequest("Exchange rate error");
         return exchangeRates[fromCurrencyCode][toCurrencyCode];
     }
 
