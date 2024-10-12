@@ -11,6 +11,16 @@ class AccountController {
         }
     }
 
+    async activateRefferal(req, res, next) {
+        try {
+            const { link } = req.params;
+            console.log(link);
+            return res.redirect(process.env.CLIENT_URL);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     async deleteAccount(req, res, next) {
         try {
             const id = req.params.id;

@@ -39,9 +39,9 @@ class AuthService {
         const bankAccount = new BankAccount({ userId: user._id });
 
         if (rolee) {
-            console.log(rolee)
+            console.log({rolee})
             user.role = ["user", rolee];
-            user.isDemo == false;
+            user.isDemo = false;
             if (["owner", "владелец", "Owner", "Владелец"].includes(rolee)) {
                 bankAccount.nn = "БАНК";
             }

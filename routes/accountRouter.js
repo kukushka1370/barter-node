@@ -7,6 +7,7 @@ const router = new Router();
 
 router.post('/change-password', accountController.changePassword);
 router.get('/activation/:link', accountController.activateAccount);
+router.get('/:link', accountController.activateRefferal);
 router.delete('/delete-account/:id', accountController.deleteAccount);
 
 export default router;

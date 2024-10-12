@@ -6,10 +6,11 @@ class BankAccountController {
     async addCurrency(req, res, next) {
         try {
             const { currencyCode, currencySymbol, name } = req.body;
+            console.log({ currencyCode, currencySymbol, name })
             const bA = await Currency.findOne({ currencyCode });
             console.log(bA)
             if (bA) throw ApiError.BadRequest("Currency already exists");
-            const newCurr = new Currency({ currencyCode, currencySymbol, name });
+            const newCurr = new Currency({ currencyCode, symbol: currencySymbol, name });
             await newCurr.save();
             return res.json(newCurr);
         } catch (err) {

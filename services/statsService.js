@@ -48,12 +48,16 @@ class StatsService {
         const firstStatsRecord = await Stats.findOne().sort({ createdAt: 1 });
         firstStatsRecord.totalMoney += +money || 0;
         const bank = await BankAccount.findOne({ nn: "БАНК" });
+        // const banks = await BankAccount.find();
+        console.log({ bank });
         if (bank) {
             bank.amount += money;
+            await bank.save();
         }
+        console.log({ bank });
         // const n = new Stats({ totalMoney: money });
         // await n.save();
-        console.log(firstStatsRecord);
+        // console.log(firstStatsRecord);
         await firstStatsRecord.save();
         return firstStatsRecord;
     }
