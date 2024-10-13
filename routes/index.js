@@ -9,6 +9,7 @@ import statsRouter from "./statsRouter.js";
 import updateRouter from "./updateRouter.js";
 import messageRouter from "./messageRouter.js";
 import pageRouter from "./pageRouter.js";
+import chatRouter from "./chatRouter.js";
 
 const router = new Router();
 
@@ -20,6 +21,7 @@ router.use('/updates', updateRouter);
 router.use('/users', userRouter);
 router.use('/bank', bankAccountRouter);
 router.use('/message', messageRouter);
+router.use('/chat', chatRouter);
 router.use('/pages', pageRouter);
 
 export default router;

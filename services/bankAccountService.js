@@ -1,6 +1,7 @@
 import ApiError from "../exceptions/ApiError.js";
 import BankAccount from "../models/bank-account-model.js";
 import Currency from "../models/currency-model.js";
+import Transfer from "../models/transfer-model.js";
 
 class BankAccountService {
     async addBankAccount(userId, currencyCode) {
@@ -25,7 +26,7 @@ class BankAccountService {
 
     async getBankAccounts(userId) {
         const bankAccounts = await BankAccount.find({ userId });
-        console.log({ bankAccounts });
+        // console.log({ bankAccounts });
         return bankAccounts;
     }
 
@@ -58,12 +59,23 @@ class BankAccountService {
 
         const userBA = await BankAccount.find({ userId: bankAccountFrom.userId });
 
+        const newTransferHistory = new Transfer({ userId: bankAccountFrom?._id, recepientId: bankAccountTo?._id, amount, currencyFrom: bankAccountFrom.currencyName, currencyTo: bankAccountTo.currencyName });
+
+        await newTransferHistory.save();
+
         return {
             bankAccountFrom,
             bankAccountTo,
             exchangeRate,
             userBA,
         };
+    }
+
+    async getAllCurrencies() {
+        const curr = await Currency.find();
+        console.log("{ curr }!!!!!!!!!")
+        console.log({ curr })
+        return curr;
     }
 
     getExchangeRate(fromCurrencyCode, toCurrencyCode) {

@@ -14,7 +14,7 @@ class ChatService {
 
     async findUserChats(userId) {
         const chats = await Chat.find({
-            members: { $elemMatch: { $eq: userId } },
+            members: { $in: [userId] },
         });
         return chats;
     }
