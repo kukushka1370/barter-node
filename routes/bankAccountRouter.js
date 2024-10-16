@@ -9,6 +9,9 @@ const router = new Router();
 router.post('/new-currency', bankAccountController.addCurrency);
 router.get('/get-currencies', userController.getAllCurrencies);
 
+router.post('/new-credit', bankAccountController.createCredit);
+router.get('/get-user-credits', bankAccountController.findUserCredits);
+
 router.get('/get-user-transfers/:userId', bankAccountController.getTransferHistory);
 router.get('/get-all-transfers', bankAccountController.getAllTransfer);
 

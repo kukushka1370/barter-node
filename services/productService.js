@@ -24,7 +24,6 @@ class ProductService {
         const productData = new Product({
             name,
             price,
-            currency: currencySymbol,
             img: fileName,
             quantity,
             description,

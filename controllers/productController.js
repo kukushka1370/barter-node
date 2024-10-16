@@ -5,10 +5,10 @@ class ProductController {
         try {
             const { name, price, description, quantity, category, article, website, userId, currencyCode } = req.body;
             console.log(typeof name, typeof price, typeof description, typeof quantity, typeof category, typeof article, typeof website);
-            console.log(name, price, description, quantity, category, article, website);
+            console.log(name, price, description, quantity, category, article, website, currencyCode);
             const { img } = req.files;
             console.log("Image", img);
-            const product = await productService.addProduct(name, price, description, quantity, img, category, article, website, userId, currencyCode || "RUB");
+            const product = await productService.addProduct(name, price, description, quantity, img, category, article, website, userId, currencyCode);
             return res.json(product);
         } catch (err) {
             next(err);

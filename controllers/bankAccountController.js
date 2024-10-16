@@ -1,14 +1,37 @@
 import ApiError from "../exceptions/ApiError.js";
+import Credit from "../models/credit-model.js";
 import Currency from "../models/currency-model.js";
 import Transfer from "../models/transfer-model.js";
 import bankAccountService from "../services/bankAccountService.js";
 import userService from "../services/userService.js";
 
 class BankAccountController {
+    async createCredit(req, res, next) {
+        try {
+            const { userId, bankId, amount, currencyCode } = req.body;
+            const newCredit = new Credit({ userId, bankId, amount, currencyCode });
+            await newCredit.save();
+            return res.json(newCredit);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async findUserCredits(req, res, next) {
+        try {
+            const { userId } = req.params;
+            const credits = await Credit.find({ userId });
+            const credits2 = await Credit.find({ bankId: userId });
+            return res.json({ credits, credits2 });
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async getTransferHistory(req, res, next) {
         try {
             const { userId } = req.params;
-            console.log({userId})
+            console.log({ userId })
             const userTransHistory = await Transfer.find({ userId });
             return res.json(userTransHistory);
         } catch (err) {
@@ -77,6 +100,7 @@ class BankAccountController {
             const { bankAccountFromId, bankAccountToId, transferAmount } = req.body;
             console.log({ bankAccountFromId, bankAccountToId, transferAmount });
             const bankAccounts = await bankAccountService.transfer(bankAccountFromId, bankAccountToId, transferAmount);
+            console.log({ bankAccounts })
             return res.json(bankAccounts);
         } catch (e) {
             next(e);

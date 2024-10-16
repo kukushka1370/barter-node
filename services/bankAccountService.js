@@ -32,11 +32,16 @@ class BankAccountService {
 
     async transfer(bIdFrom, bIdTO, amo) {
         const amount = +amo;
+        let convertedAmount = amount;
+        let exchangeRate = 1;
+
         const bankAccountFrom = await BankAccount.findOne({ _id: bIdFrom });
         const bankAccountTo = await BankAccount.findOne({ _id: bIdTO });
         if (!bankAccountFrom || !bankAccountTo) throw ApiError.BadRequest(`Bank Account not found`);
 
+        console.log("=======================================");
         console.log(bankAccountFrom.currencyCode, bankAccountTo.currencyCode);
+        console.log("=======================================");
 
         const currencyFrom = await Currency.findOne({ currencyCode: bankAccountFrom.currencyCode });
         const currencyTo = await Currency.findOne({ currencyCode: bankAccountTo.currencyCode });
@@ -44,10 +49,11 @@ class BankAccountService {
 
         console.log(currencyFrom.currencyCode, "AND", currencyTo.currencyCode)
 
-        const exchangeRate = this.getExchangeRate(currencyFrom.currencyCode.toUpperCase(), currencyTo.currencyCode.toUpperCase());
-        const convertedAmount = amount * exchangeRate;
-
-        console.log({ convertedAmount })
+        if (currencyFrom.currencyCode !== currencyTo.currencyCode) {
+            exchangeRate = this.getExchangeRate(currencyFrom.currencyCode.toUpperCase(), currencyTo.currencyCode.toUpperCase());
+            convertedAmount = amount * exchangeRate;   
+            console.log({ convertedAmount, amount, exchangeRate })
+        }
 
         if (bankAccountFrom?.amount < +amount) throw ApiError.BadRequest("Not enough money");
         bankAccountFrom.amount -= +amount;
@@ -57,13 +63,18 @@ class BankAccountService {
         await bankAccountFrom.save();
         await bankAccountTo.save();
 
+        const internationalTransfer = bankAccountFrom?.userId !== bankAccountTo?.userId;
+
         const userBA = await BankAccount.find({ userId: bankAccountFrom.userId });
 
         const newTransferHistory = new Transfer({ userId: bankAccountFrom?._id, recepientId: bankAccountTo?._id, amount, currencyFrom: bankAccountFrom.currencyName, currencyTo: bankAccountTo.currencyName });
 
         await newTransferHistory.save();
 
+        console.log("03u93f9f");
+
         return {
+            internationalTransfer,
             bankAccountFrom,
             bankAccountTo,
             exchangeRate,
