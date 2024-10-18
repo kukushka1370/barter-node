@@ -28,6 +28,22 @@ class BankAccountController {
         }
     }
 
+    async approveOrDeclineCredit(req, res, next) {
+        try {
+            const { creditId, verdict } = req.body;
+            if (verdict === false) {
+                await Credit.findOneAndDelete({ _id: creditId });
+            } else if (verdict === true) {
+                const p = await Credit.findOne({ _id: creditId });
+                p.status = true;
+                await p?.save();
+            }
+            return res.json("");
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async getTransferHistory(req, res, next) {
         try {
             const { userId } = req.params;

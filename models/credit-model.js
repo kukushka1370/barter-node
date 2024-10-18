@@ -14,6 +14,10 @@ const creditSchema = new mongoose.Schema({
         type: String,
         default: "RUB",
     },
+    status: {
+        type: Boolean,
+        default: null,
+    },
 }, { timestamps: true });
 
 const Credit = mongoose.model("credit", creditSchema);

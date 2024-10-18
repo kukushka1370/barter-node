@@ -62,6 +62,18 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
     },
+    totalReviews: {
+        type: Number,
+        default: 1,
+    },
+    rev: {
+        type: [Number],
+        default: [100],
+    },
+    reviews: {
+        type: [String],
+        default: []
+    }
 }, { timestamps: true });
 
 const tokenSchema = new mongoose.Schema({
