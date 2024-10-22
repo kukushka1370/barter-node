@@ -1,7 +1,9 @@
 import ApiError from "../exceptions/ApiError.js";
 import BankAccount from "../models/bank-account-model.js";
 import Currency from "../models/currency-model.js";
+import Stats from "../models/stats-model.js";
 import Transfer from "../models/transfer-model.js";
+import { User } from "../models/user-model.js";
 
 class BankAccountService {
     async addBankAccount(userId, currencyCode) {
@@ -31,31 +33,57 @@ class BankAccountService {
     }
 
     async transfer(bIdFrom, bIdTO, amo) {
-        const amount = +amo;
+        let amount = +amo;
         let convertedAmount = amount;
         let exchangeRate = 1;
 
         const bankAccountFrom = await BankAccount.findOne({ _id: bIdFrom });
         const bankAccountTo = await BankAccount.findOne({ _id: bIdTO });
         if (!bankAccountFrom || !bankAccountTo) throw ApiError.BadRequest(`Bank Account not found`);
-
-        console.log("=======================================");
-        console.log(bankAccountFrom.currencyCode, bankAccountTo.currencyCode);
-        console.log("=======================================");
+        if (bankAccountFrom?.amount < +amount) throw ApiError.BadRequest("Not enough money");
 
         const currencyFrom = await Currency.findOne({ currencyCode: bankAccountFrom.currencyCode });
         const currencyTo = await Currency.findOne({ currencyCode: bankAccountTo.currencyCode });
         if (!currencyFrom || !currencyTo) throw ApiError.BadRequest(`Currency not found`);
 
-        console.log(currencyFrom.currencyCode, "AND", currencyTo.currencyCode)
+        const user1 = await User.findOne({ _id: bankAccountFrom.userId });
+        const user2 = await User.findOne({ _id: bankAccountTo.userId });
+        if (!user1 || !user2) throw ApiError.BadRequest("Error...");
+
+        const manager1 = await User.findOne({ postcode: user1.postcode });
+        const manager2 = await User.findOne({ postcode: user2.postcode });
+        // if (!manager1 || !manager2) throw ApiError.BadRequest("Error...");
+
+        if (manager1 && manager2) {
+            const managerBA1 = await BankAccount.findOne({ userId: manager1._id, currencyCode: bankAccountFrom.currencyCode });
+            const managerBA2 = await BankAccount.findOne({ userId: manager2._id, currencyCode: bankAccountFrom.currencyCode });
+            // if (!managerBA1 || !managerBA2) throw ApiError.BadRequest("Error...");
+
+            const firstStatsRecord = await Stats.findOne().sort({ createdAt: 1 });
+            const cmmm = (firstStatsRecord.managerCommission / 100) * amount;;
+            amount -= cmmm * 2;
+            if (managerBA1) {
+                managerBA1.amount += cmmm;
+                await managerBA1.save();
+            }
+            if (managerBA2) {
+                managerBA2.amount += cmmm;
+                await managerBA2.save();
+            }
+        }
+
+        console.log("=======================================");
+        console.log(bankAccountFrom.currencyCode, bankAccountTo.currencyCode);
+        console.log("=======================================");
+
+        console.log(currencyFrom.currencyCode, "AND", currencyTo.currencyCode);
 
         if (currencyFrom.currencyCode !== currencyTo.currencyCode) {
             exchangeRate = this.getExchangeRate(currencyFrom.currencyCode.toUpperCase(), currencyTo.currencyCode.toUpperCase());
-            convertedAmount = amount * exchangeRate;   
+            convertedAmount = amount * exchangeRate;
             console.log({ convertedAmount, amount, exchangeRate })
         }
 
-        if (bankAccountFrom?.amount < +amount) throw ApiError.BadRequest("Not enough money");
         bankAccountFrom.amount -= +amount;
         bankAccountTo.amount += convertedAmount;
 

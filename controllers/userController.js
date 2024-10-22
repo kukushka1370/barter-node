@@ -7,13 +7,16 @@ class UserController {
     async updateUserRating(req, res, next) {
         try {
             const { rating, userId, review } = req.body;
-            console.log({rating, userId, review});
-            return res.json()
+            console.log({ rating, userId, review });
+
             const user = await User.findOne({ _id: userId });
             if (!user) throw ApiError.BadRequest("Errrrooooorrrr");
-            const sum = user.rev.reduce((accum, val) => accum + val, 0);
-            user.rating = (sum + rating / user.totalReviews + 1) * 100;
-            user.rev += rating;
+
+            const sum = user.rev.reduce((accum, val) => accum + +val, 0) + +rating;
+            console.log({ sum, rating, "length": user.rev.length, "rev": user.rev })
+            user.rating = ((+sum) / (user.rev.length + 1)) * 10;
+            console.log((+sum + +rating) / (user.rev.length + 1));
+            user.rev.push(+rating);
             user.totalReviews++;
             if (review) {
                 user.reviews.push(review);
