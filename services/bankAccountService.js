@@ -37,6 +37,9 @@ class BankAccountService {
         let convertedAmount = amount;
         let exchangeRate = 1;
 
+        const firstStatsRecord = await Stats.findOne().sort({ createdAt: 1 });
+        const cmmm = (firstStatsRecord.managerCommission / 100) * amount;
+
         const bankAccountFrom = await BankAccount.findOne({ _id: bIdFrom });
         const bankAccountTo = await BankAccount.findOne({ _id: bIdTO });
         if (!bankAccountFrom || !bankAccountTo) throw ApiError.BadRequest(`Bank Account not found`);
@@ -53,15 +56,30 @@ class BankAccountService {
         const manager1 = await User.findOne({ postcode: user1.postcode });
         const manager2 = await User.findOne({ postcode: user2.postcode });
         // if (!manager1 || !manager2) throw ApiError.BadRequest("Error...");
+        if (!manager1 || !manager2) {
+            let t = 0;
+            if (manager1) t++;
+            if (manager2) t++;
+            const p = await BankAccount.findOne({ nn: "Банк" });
+            console.log({ p });
+            if (p) {
+                const conv = this.getExchangeRate(currencyFrom.currencyCode.toUpperCase(), "RUB");
+                console.log({ conv })
+                p.amount += conv * cmmm * t;
+                await p.save();
+            }
+        }
 
-        if (manager1 && manager2) {
+
+        if (manager1 || manager2) {
             const managerBA1 = await BankAccount.findOne({ userId: manager1._id, currencyCode: bankAccountFrom.currencyCode });
             const managerBA2 = await BankAccount.findOne({ userId: manager2._id, currencyCode: bankAccountFrom.currencyCode });
-            // if (!managerBA1 || !managerBA2) throw ApiError.BadRequest("Error...");
 
-            const firstStatsRecord = await Stats.findOne().sort({ createdAt: 1 });
-            const cmmm = (firstStatsRecord.managerCommission / 100) * amount;;
-            amount -= cmmm * 2;
+            let temp = 0;
+            if (managerBA1) temp++;
+            if (managerBA2) temp++;
+
+            amount -= cmmm * temp;
             if (managerBA1) {
                 managerBA1.amount += cmmm;
                 await managerBA1.save();

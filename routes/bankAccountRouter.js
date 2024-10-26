@@ -10,6 +10,7 @@ router.post('/new-currency', bankAccountController.addCurrency);
 router.get('/get-currencies', userController.getAllCurrencies);
 
 router.post('/new-credit', bankAccountController.createCredit);
+router.post('/new-credit-ask', bankAccountController.askForCredit);
 router.get('/get-user-credits/:userId', bankAccountController.findUserCredits);
 router.post('/aod-credit', bankAccountController.approveOrDeclineCredit);
 

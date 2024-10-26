@@ -9,6 +9,7 @@ const router = new Router();
 router.get('/', userController.getAllUsers); // checkAuth
 router.post('/set/app-or-decline', userController.approveOrDecline); // checkAuthrating, userId, review
 router.post('/update-rating', userController.updateUserRating); // checkAuthrating, userId, review
+router.get('/post-indexes', userController.getPostIndexes); // checkAuthrating, userId, review
 
 router.get('/find/:userId', async (req, res, next) => {
     try {

@@ -10,6 +10,19 @@ class BankAccountController {
         try {
             const { userId, bankId, amount, currencyCode } = req.body;
             const newCredit = new Credit({ userId, bankId, amount, currencyCode });
+            newCredit.status = "approved";
+            await newCredit.save();
+            return res.json(newCredit);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async askForCredit(req, res, next) {
+        try {
+            const { userId, bankId, amount, currencyCode } = req.body;
+            const newCredit = new Credit({ userId, bankId, amount, currencyCode });
+            newCredit.status = "pending";
             await newCredit.save();
             return res.json(newCredit);
         } catch (err) {
@@ -35,10 +48,10 @@ class BankAccountController {
                 await Credit.findOneAndDelete({ _id: creditId });
             } else if (verdict === true) {
                 const p = await Credit.findOne({ _id: creditId });
-                p.status = true;
+                p.status = "approved";
                 await p?.save();
             }
-            return res.json("");
+            return res.json("ok!");
         } catch (err) {
             next(err);
         }

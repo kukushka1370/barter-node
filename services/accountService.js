@@ -32,14 +32,14 @@ class AccountService {
     }
 
     async changePassword(email, token, pass, newPass) {
-        if (!email || !token) {
+        if (!email) {
             throw ApiError.Unauthorized();
         }
 
-        const decodedToken = tokenService.validateRefreshToken(token);
-        if (decodedToken.email !== email || !decodedToken.role.includes("admin")) {
-            throw ApiError.Forbidden(`We're sorry, but you don't have permission to change password for ${email}`);
-        }
+        // const decodedToken = tokenService.validateRefreshToken(token);
+        // if (decodedToken.email !== email || !decodedToken.role.includes("admin")) {
+        //     throw ApiError.Forbidden(`We're sorry, but you don't have permission to change password for ${email}`);
+        // }
 
         const user = await User.findOne({ email });
         if (!user) {

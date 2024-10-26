@@ -15,8 +15,8 @@ const creditSchema = new mongoose.Schema({
         default: "RUB",
     },
     status: {
-        type: Boolean,
-        default: null,
+        type: String,
+        default: "",
     },
 }, { timestamps: true });
 

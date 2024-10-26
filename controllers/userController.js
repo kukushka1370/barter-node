@@ -1,5 +1,6 @@
 import ApiError from "../exceptions/ApiError.js";
 import Currency from "../models/currency-model.js";
+import PostIndex from "../models/post-index-model.js";
 import { User } from "../models/user-model.js";
 import userService from "../services/userService.js";
 
@@ -32,6 +33,15 @@ class UserController {
         try {
             const users = await userService.getAllUsers();
             return res.json(users);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getPostIndexes(req, res, next) {
+        try {
+            const indexes = await PostIndex.find();
+            return res.json(indexes);
         } catch (err) {
             next(err);
         }
