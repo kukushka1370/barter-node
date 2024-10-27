@@ -1,3 +1,4 @@
+import { User } from "../models/user-model.js";
 import accountService from "../services/accountService.js";
 
 class AccountController {
@@ -13,8 +14,11 @@ class AccountController {
 
     async activateRefferal(req, res, next) {
         try {
-            const { link } = req.params;
+            const { link, userId } = req.params;
             console.log(link);
+            const user = await User.findOne({ referralLink: link });
+            user.refferals.push(userId);
+            await user.save();
             return res.redirect(process.env.CLIENT_URL);
         } catch (e) {
             next(e);

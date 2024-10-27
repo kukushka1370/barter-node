@@ -73,7 +73,11 @@ const userSchema = new mongoose.Schema({
     reviews: {
         type: [String],
         default: []
-    }
+    },
+    personalCommission: {
+        type: Number,
+        default: 0,
+    },
 }, { timestamps: true });
 
 const tokenSchema = new mongoose.Schema({

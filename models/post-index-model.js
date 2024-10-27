@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const postIndexSchema = new mongoose.Schema({
-    val: {
+    index: {
         type: String,
     },
 }, { timestamps: true });

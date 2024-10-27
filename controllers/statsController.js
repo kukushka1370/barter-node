@@ -1,3 +1,4 @@
+import { User } from "../models/user-model.js";
 import statsService from "../services/statsService.js";
 
 class StatsController {
@@ -29,6 +30,21 @@ class StatsController {
             const info = await statsService.updateCommission(commission);
             console.log({ info })
             return res.json(info);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async updateCommissionForSingleUser(req, res, next) {
+        try {
+            const { commission, userId } = req.body;
+            console.log({ commission });
+            const user = await User.findOne({ _id: userId });
+            user.personalCommission = commission;
+            await user.save();
+            // const info = await statsService.updateCommission(commission);
+            // console.log({ info })
+            return res.json(user);
         } catch (err) {
             next(err);
         }

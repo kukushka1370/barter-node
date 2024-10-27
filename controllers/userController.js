@@ -38,10 +38,31 @@ class UserController {
         }
     }
 
+    async findUser(req, res, next) {
+        try {
+            const { userId } = req.params;
+            const user = await User.findById(userId);
+            return res.json(user);
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async getPostIndexes(req, res, next) {
         try {
             const indexes = await PostIndex.find();
             return res.json(indexes);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async addPostIndex(req, res, next) {
+        try {
+            const { index } = req.body;
+            const indx = new PostIndex({ index });
+            await indx.save();
+            return res.json(indx);
         } catch (err) {
             next(err);
         }

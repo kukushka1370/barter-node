@@ -12,9 +12,11 @@ export default class UserDto {
     rating;
     isDemo;
     referralLink;
+    personalCommission;
 
     constructor(model) {
         this.id = model._doc._id;
+        this.personalCommission = model._doc.personalCommission;
         this.isDemo = model._doc.isDemo;
         this.email = model._doc.email;
         this.name = model._doc.name;
