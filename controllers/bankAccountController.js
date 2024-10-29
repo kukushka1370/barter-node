@@ -1,4 +1,5 @@
 import ApiError from "../exceptions/ApiError.js";
+import BankAccount from "../models/bank-account-model.js";
 import Credit from "../models/credit-model.js";
 import Currency from "../models/currency-model.js";
 import Transfer from "../models/transfer-model.js";
@@ -6,6 +7,56 @@ import bankAccountService from "../services/bankAccountService.js";
 import userService from "../services/userService.js";
 
 class BankAccountController {
+    async createBankAccountCredit(req, res, next) {
+        try {
+            const { userId, amount, currencyCode, term } = req.body;
+            const bA = await BankAccount.findOne({ userId, currencyCode, isCredit: true });
+
+            if (bA) {
+                throw ApiError.BadRequest(`Bank account already exists`);
+            }
+
+            const currency = await Currency.findOne({ currencyCode });
+            if (!currency) throw ApiError.BadRequest(`Currency not found`);
+
+            const newCredit = new BankAccount({
+                userId,
+                amount,
+                currencyCode,
+                currencySymbol: currency.symbol || "default",
+                currencyName: currency.name || "default",
+                term,
+                isCredit: true,
+            });
+            await newCredit.save();
+            return res.json(newCredit);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async freezeCredit(req, res, next) {
+        try {
+            const { creditId } = req.body;
+            console.log({creditId})
+            const credit = await BankAccount.findOne({ _id: creditId, isCredit: true });
+            credit.isFreezed = true;
+            await credit.save();
+            return res.json(credit);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getBankAccountCreditss(req, res, next) {
+        try {
+            const credits = await BankAccount.find({ isCredit: true });
+            return res.json(credits);
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async createCredit(req, res, next) {
         try {
             const { userId, bankId, amount, currencyCode } = req.body;

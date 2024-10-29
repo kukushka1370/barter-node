@@ -25,6 +25,18 @@ const bankAccountSchema = new mongoose.Schema({
         type: String,
         default: "₽",
     },
+    isCredit: {
+        type: Boolean,
+        default: false,
+    },
+    isFreezed: {
+        type: Boolean,
+        default: false,
+    },
+    term: {
+        type: String,
+        default: "Месяц",
+    },
     curr: {
         type: String,
         default: "Russian Ruble",

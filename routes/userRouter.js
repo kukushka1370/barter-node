@@ -12,5 +12,6 @@ router.post('/update-rating', userController.updateUserRating); // checkAuthrati
 router.get('/post-indexes', userController.getPostIndexes);
 router.post('/add-post-index', checkRole("admin"), userController.addPostIndex);
 router.get('/find/:userId', userController.findUser);
+router.post('/update-commission', userController.updatePersonalCOmmission);
 
 export default router;

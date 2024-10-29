@@ -38,6 +38,18 @@ class UserController {
         }
     }
 
+    async updatePersonalCOmmission(req, res, next) {
+        try {
+            const { userId, newCommission } = req.body;
+            const user = await User.findById(userId);
+            user.personalCommission = newCommission;
+            await user.save();
+            return res.json(user);
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async findUser(req, res, next) {
         try {
             const { userId } = req.params;
