@@ -5,6 +5,7 @@ import Currency from "../models/currency-model.js";
 import Product from "../models/product-model.js";
 import { User } from "../models/user-model.js";
 import fileService from "./fileService.js";
+import Transfer from "../models/transfer-model.js";
 
 class ProductService {
     async addProduct(name, price, description, quantity, img, category, article, website, userId, currencyCode) {
@@ -72,9 +73,18 @@ class ProductService {
         const { userId } = product;
         console.log({ userId });
         const user = await User.findOne({ _id: userId });
+        let bankAccounts = [];
+        let transfers = [];
+        if (user) {
+            bankAccounts = await BankAccount.find({ userId: user._id });
+            transfers = await Transfer.find({ userId: user._id });
+        }
+        console.log({transfers})
         return {
             user,
             product,
+            bankAccounts,
+            transfers,
         };
     }
 

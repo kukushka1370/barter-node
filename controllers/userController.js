@@ -38,6 +38,18 @@ class UserController {
         }
     }
 
+    async updateSystemRating(req, res, next) {
+        try {
+            const { userId, systemRating } = req.body;
+            const user = await User.findOne({ _id: userId });
+            user.systemRating = systemRating;
+            await user.save();
+            return res.json(user);
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async updatePersonalCOmmission(req, res, next) {
         try {
             const { userId, newCommission } = req.body;

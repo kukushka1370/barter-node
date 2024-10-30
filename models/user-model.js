@@ -78,6 +78,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    systemRating: {
+        type: Number,
+        default: 0,
+    },
 }, { timestamps: true });
 
 const tokenSchema = new mongoose.Schema({
